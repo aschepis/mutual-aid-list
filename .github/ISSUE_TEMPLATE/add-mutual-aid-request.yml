@@ -1,7 +1,8 @@
 name: Add Mutual Aid Request
 description: Submit a mutual aid request to be added to the list
 title: "[Request] "
-labels: ["mutual-aid-request"]
+labels:
+  - mutual-aid-request
 body:
   - type: markdown
     attributes:
