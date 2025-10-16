@@ -281,6 +281,62 @@ select:focus {
     background-color: #2980b9;
 }
 
+/* Related Resources Section */
+.related-resources {
+    background-color: var(--background-alt);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.related-resources h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.related-resources p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.resource-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.resource-list li {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.resource-list li:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.resource-list a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.resource-list a:hover {
+    text-decoration: underline;
+}
+
+.resource-description {
+    display: block;
+    color: var(--text-color);
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
 /* Contribute Section */
 .contribute {
     background-color: var(--background-alt);
