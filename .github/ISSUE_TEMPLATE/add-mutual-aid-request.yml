@@ -1,0 +1,99 @@
+name: Add Mutual Aid Request
+description: Submit a mutual aid request to be added to the list
+title: "[Request] "
+labels: ["mutual-aid-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Submit a Mutual Aid Request
+
+        Thank you for helping connect people in need with support! Please fill out the form below to add a mutual aid request to our list.
+
+        **Note:** All submissions are public and will be reviewed before being added to the site.
+
+  - type: input
+    id: name
+    attributes:
+      label: Request Name
+      description: A short, descriptive name for this mutual aid need
+      placeholder: "e.g., Family Needs Emergency Housing Support"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Brief description of the mutual aid need and situation
+      placeholder: "e.g., A family of four lost their home in a fire and needs immediate assistance with temporary housing, clothing, and basic necessities while they rebuild."
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Link to Mutual Aid Request
+      description: Direct link to the fundraiser (GoFundMe, etc.)
+      placeholder: "https://gofundme.com/..."
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: City and state code
+      placeholder: "Boston, MA"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: primary_tag
+    attributes:
+      label: Primary Need Category
+      description: What is the primary type of assistance needed?
+      options:
+        - housing
+        - medical
+        - food
+        - childcare
+        - transportation
+        - funeral
+        - emergency
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: additional_tags
+    attributes:
+      label: Additional Tags (Optional)
+      description: Comma-separated list of additional relevant tags
+      placeholder: "e.g., family, veteran, eviction"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: verification
+    attributes:
+      label: Verification
+      description: Please confirm the following
+      options:
+        - label: This is a legitimate mutual aid request
+          required: true
+        - label: I have permission to share this information publicly
+          required: true
+        - label: The link directs to a trusted mutual aid platform
+          required: true
+        - label: This request is for someone in Massachusetts or New England
+          required: true
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: Additional Information (Optional)
+      description: Any other context or information about this request
+      placeholder: "Optional additional details..."
+    validations:
+      required: false

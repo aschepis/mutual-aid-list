@@ -1,0 +1,223 @@
+name: Convert Issue to PR
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  create-pr-from-issue:
+    if: contains(github.event.issue.labels.*.name, 'mutual-aid-request')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Add processing comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: '🤖 Processing your submission... This may take a minute.'
+            });
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        continue-on-error: true
+        id: checkout
+
+      - name: Check checkout success
+        if: steps.checkout.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: '❌ **Error:** Failed to checkout repository. Please contact the maintainer.\n\ncc: @aschepis'
+            });
+            core.setFailed('Checkout failed');
+
+      - name: Parse issue and create JSON
+        id: parse
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body;
+
+            // Parse the issue body (GitHub issue forms format)
+            const parseField = (label) => {
+              const regex = new RegExp(`### ${label}\\s*([\\s\\S]*?)(?=###|$)`, 'i');
+              const match = body.match(regex);
+              return match ? match[1].trim() : '';
+            };
+
+            // Extract fields
+            const name = parseField('Request Name');
+            const description = parseField('Description');
+            const link = parseField('Link to Mutual Aid Request');
+            const location = parseField('Location');
+            const primaryTag = parseField('Primary Need Category');
+            const additionalTags = parseField('Additional Tags \\(Optional\\)');
+
+            // Build tags array
+            const tags = [primaryTag.toLowerCase()];
+            if (additionalTags) {
+              const extraTags = additionalTags.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
+              tags.push(...extraTags);
+            }
+
+            // Create JSON entry
+            const now = new Date().toISOString();
+            const entry = {
+              name: name,
+              description: description,
+              link: link,
+              location: location || undefined,
+              tags: tags,
+              created_at: now,
+              updated_at: now
+            };
+
+            // Remove undefined fields
+            Object.keys(entry).forEach(key => entry[key] === undefined && delete entry[key]);
+
+            // Validate required fields
+            if (!name || !description || !link) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '❌ **Error:** Missing required fields (name, description, or link). Please check your submission and try again.'
+              });
+              core.setFailed('Missing required fields');
+              return;
+            }
+
+            // Store for next step
+            core.setOutput('entry', JSON.stringify(entry, null, 2));
+            core.setOutput('issue_number', issue.number);
+            core.setOutput('issue_title', issue.title);
+            core.setOutput('branch_name', `mutual-aid-request-${issue.number}`);
+
+      - name: Check parsing success
+        if: steps.parse.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: '❌ **Error:** Failed to parse your submission. Please check that all required fields are filled out correctly.\n\ncc: @aschepis'
+            });
+            core.setFailed('Parsing failed');
+
+      - name: Create branch and update data file
+        id: update_data
+        continue-on-error: true
+        env:
+          ENTRY: ${{ steps.parse.outputs.entry }}
+          BRANCH_NAME: ${{ steps.parse.outputs.branch_name }}
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create new branch
+          git checkout -b $BRANCH_NAME
+
+          # Read existing data
+          DATA_FILE="data/requests.json"
+
+          # Add new entry to the JSON array
+          echo "$ENTRY" > /tmp/new_entry.json
+
+          # Validate JSON before appending
+          if ! jq empty $DATA_FILE 2>/dev/null; then
+            echo "Error: Existing data file is not valid JSON"
+            exit 1
+          fi
+
+          # Use jq to append to array
+          if ! jq ". += [$(cat /tmp/new_entry.json)]" $DATA_FILE > /tmp/updated.json; then
+            echo "Error: Failed to merge JSON data"
+            exit 1
+          fi
+
+          mv /tmp/updated.json $DATA_FILE
+
+          # Validate the updated file
+          if ! jq empty $DATA_FILE 2>/dev/null; then
+            echo "Error: Updated data file is not valid JSON"
+            exit 1
+          fi
+
+          # Commit changes
+          git add $DATA_FILE
+          git commit -m "Add mutual aid request from issue #${{ steps.parse.outputs.issue_number }}"
+
+          # Push branch
+          git push origin $BRANCH_NAME
+
+      - name: Check data update success
+        if: steps.update_data.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: '❌ **Error:** Failed to update the data file. The data may be malformed or there may be a merge conflict.\n\ncc: @aschepis'
+            });
+            core.setFailed('Data update failed');
+
+      - name: Create Pull Request
+        id: create_pr
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = '${{ steps.parse.outputs.branch_name }}';
+            const issueNumber = '${{ steps.parse.outputs.issue_number }}';
+            const issueTitle = '${{ steps.parse.outputs.issue_title }}';
+
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: issueTitle,
+              head: branchName,
+              base: 'main',
+              body: `This PR was automatically created from issue #${issueNumber}\n\nCloses #${issueNumber}`
+            });
+
+            // Add comment to issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `✅ **Thank you for your submission!**\n\nA pull request has been automatically created: #${pr.number}\n\nThe request will be reviewed and merged shortly. You'll receive a notification when it's live on the site.`
+            });
+
+            console.log(`Created PR #${pr.number}`);
+
+      - name: Check PR creation success
+        if: steps.create_pr.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: '❌ **Error:** Failed to create pull request. The branch may already exist or there may be a permissions issue.\n\ncc: @aschepis'
+            });
+            core.setFailed('PR creation failed');

@@ -63,6 +63,17 @@ body {
     font-weight: 500;
 }
 
+.banner-cta {
+    color: white;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+}
+
+.banner-cta:hover {
+    opacity: 0.8;
+}
+
 .banner-links {
     display: flex;
     gap: 1rem;

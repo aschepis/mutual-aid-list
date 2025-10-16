@@ -17,7 +17,21 @@ The site is modeled after [Operation Milkweed](https://operationmilkweed.org/).
 
 We welcome contributions from the community! If you know someone who needs help, you can add their mutual aid request to this list.
 
-### How to Add a Mutual Aid Request
+### Easy Method: Submit via Form (Recommended)
+
+**No coding required!** Simply fill out our submission form:
+
+👉 **[Submit a Mutual Aid Request](https://github.com/aschepis/mutual-aid-list/issues/new?template=add-mutual-aid-request.yml)**
+
+1. Click the link above
+2. Fill out the form with the request details
+3. Submit the issue
+4. Our automation will create a pull request for you
+5. Once reviewed, the request will be added to the site
+
+### Advanced Method: Submit via Pull Request
+
+If you're comfortable with Git and JSON:
 
 1. **Fork this repository**
 
