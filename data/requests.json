@@ -103,5 +103,19 @@
     ],
     "created_at": "2025-01-09T15:45:00Z",
     "updated_at": "2025-01-09T15:45:00Z"
+  },
+  {
+    "name": "[TEST] Family in need",
+    "description": "A family of four lost their home in a fire and need help getting back on their feet.",
+    "link": "https://linktr.ee/aschepis",
+    "location": "Boston, MA",
+    "tags": [
+      "housing",
+      "fire",
+      "housing",
+      "food"
+    ],
+    "created_at": "2025-10-16T20:25:09.818Z",
+    "updated_at": "2025-10-16T20:25:09.818Z"
   }
 ]
