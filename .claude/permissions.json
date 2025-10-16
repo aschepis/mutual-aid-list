@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "read": true,
+    "write": true,
+    "edit": true,
+    "delete": true,
+    "execute": true
+  },
+  "allowed_commands": [
+    "hugo",
+    "hugo server",
+    "hugo -D",
+    "git",
+    "npm",
+    "node"
+  ],
+  "description": "Full permissions for Claude Code to read, edit, build Hugo, and execute commands in this repository"
+}

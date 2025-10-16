@@ -1,0 +1,12 @@
+name = "Mutual Aid"
+license = "MIT"
+licenselink = "https://github.com/aschepis/mutual-aid-list/blob/main/LICENSE"
+description = "A clean, minimal theme for displaying mutual aid requests"
+homepage = "https://github.com/aschepis/mutual-aid-list"
+tags = ["minimal", "clean", "list", "community"]
+features = ["sortable", "filterable", "responsive"]
+min_version = "0.41.0"
+
+[author]
+  name = "Mutual Aid List"
+  homepage = "https://github.com/aschepis/mutual-aid-list"

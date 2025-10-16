@@ -1,0 +1,140 @@
+name: Validate Pull Request
+
+on:
+  pull_request:
+    paths:
+      - 'data/**/*.json'
+
+jobs:
+  validate-json:
+    runs-on: ubuntu-latest
+    name: Validate JSON Files
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate JSON syntax
+        run: |
+          echo "Validating JSON files in data/ directory..."
+
+          # Find all JSON files in data directory
+          json_files=$(find data -name "*.json" -type f)
+
+          if [ -z "$json_files" ]; then
+            echo "No JSON files found in data/ directory"
+            exit 1
+          fi
+
+          # Validate each JSON file
+          for file in $json_files; do
+            echo "Checking $file..."
+
+            # Check if file is valid JSON
+            if ! jq empty "$file" 2>/dev/null; then
+              echo "❌ ERROR: $file is not valid JSON"
+              exit 1
+            fi
+
+            echo "✅ $file is valid JSON"
+          done
+
+          echo "All JSON files are valid!"
+
+      - name: Validate JSON schema
+        run: |
+          echo "Validating JSON schema requirements..."
+
+          # Install jq if not available (should be available in ubuntu-latest)
+          which jq || sudo apt-get install -y jq
+
+          json_files=$(find data -name "*.json" -type f)
+
+          for file in $json_files; do
+            echo "Validating schema for $file..."
+
+            # Check if it's an array (requests.json) or single object
+            if jq -e 'type == "array"' "$file" > /dev/null 2>&1; then
+              # It's an array, check each element
+              length=$(jq 'length' "$file")
+              for i in $(seq 0 $((length - 1))); do
+                # Check required fields
+                if ! jq -e ".[$i].name" "$file" > /dev/null 2>&1; then
+                  echo "❌ ERROR: Missing required field 'name' in $file at index $i"
+                  exit 1
+                fi
+
+                if ! jq -e ".[$i].description" "$file" > /dev/null 2>&1; then
+                  echo "❌ ERROR: Missing required field 'description' in $file at index $i"
+                  exit 1
+                fi
+
+                if ! jq -e ".[$i].link" "$file" > /dev/null 2>&1; then
+                  echo "❌ ERROR: Missing required field 'link' in $file at index $i"
+                  exit 1
+                fi
+
+                # Validate location format if present
+                if jq -e ".[$i].location" "$file" > /dev/null 2>&1; then
+                  location=$(jq -r ".[$i].location" "$file")
+                  if ! echo "$location" | grep -qE '^[^,]+, [A-Z]{2}$'; then
+                    echo "❌ ERROR: Location format must be '[City], [State Code]' in $file at index $i. Got: $location"
+                    exit 1
+                  fi
+                fi
+              done
+            else
+              # Single object
+              if ! jq -e '.name' "$file" > /dev/null 2>&1; then
+                echo "❌ ERROR: Missing required field 'name' in $file"
+                exit 1
+              fi
+
+              if ! jq -e '.description' "$file" > /dev/null 2>&1; then
+                echo "❌ ERROR: Missing required field 'description' in $file"
+                exit 1
+              fi
+
+              if ! jq -e '.link' "$file" > /dev/null 2>&1; then
+                echo "❌ ERROR: Missing required field 'link' in $file"
+                exit 1
+              fi
+
+              # Validate location format if present
+              if jq -e '.location' "$file" > /dev/null 2>&1; then
+                location=$(jq -r '.location' "$file")
+                if ! echo "$location" | grep -qE '^[^,]+, [A-Z]{2}$'; then
+                  echo "❌ ERROR: Location format must be '[City], [State Code]' in $file. Got: $location"
+                  exit 1
+                fi
+              fi
+            fi
+
+            echo "✅ $file passes schema validation"
+          done
+
+          echo "All files pass schema validation!"
+
+      - name: Check file location
+        run: |
+          echo "Verifying files are in data/ directory..."
+
+          # Get list of changed files
+          git fetch origin main
+          changed_files=$(git diff --name-only origin/main...HEAD)
+
+          # Check if any changed JSON files are outside data/
+          invalid_files=$(echo "$changed_files" | grep '\.json$' | grep -v '^data/' || true)
+
+          if [ -n "$invalid_files" ]; then
+            echo "❌ ERROR: The following JSON files are not in the data/ directory:"
+            echo "$invalid_files"
+            exit 1
+          fi
+
+          echo "✅ All JSON files are in the correct location"

@@ -1,0 +1,21 @@
+# Cursor Rules for Mutual Aid List
+
+## Permissions
+Full read, write, edit, delete, and execute permissions for all operations in this repository.
+
+## Project Context
+- Hugo-based static site for mutual aid requests
+- Data stored as JSON files in `data/` directory
+- Each entry follows schema: name, description, link, location, tags, created_at, updated_at
+- Deploy to GitHub Pages via `gh-pages` branch
+
+## Development
+- Use `hugo server` for local development
+- Use `hugo` to build production site
+- Validate JSON files before committing
+- Follow data schema requirements from CLAUDE.md
+
+## Code Style
+- Clean, minimal design
+- Ensure all JSON is properly formatted
+- Location format: "[City], [State Code]"

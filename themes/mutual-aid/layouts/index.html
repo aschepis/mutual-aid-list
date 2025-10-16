@@ -1,0 +1,74 @@
+{{ define "title" }}{{ .Site.Title }} - Mutual Aid Needs{{ end }}
+
+{{ define "main" }}
+<div class="container">
+    <div class="intro">
+        <h1>{{ .Site.Title }}</h1>
+        <p>{{ .Site.Params.description }}</p>
+    </div>
+
+    <div class="controls">
+        <div class="filters">
+            <div class="filter-group">
+                <label for="location-filter">Filter by Location:</label>
+                <select id="location-filter">
+                    <option value="">All Locations</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="tag-filter">Filter by Tag:</label>
+                <select id="tag-filter">
+                    <option value="">All Tags</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="sorting">
+            <label for="sort-by">Sort by:</label>
+            <select id="sort-by">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="location-asc">Location (A-Z)</option>
+                <option value="location-desc">Location (Z-A)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="aid-list" id="aid-list">
+        {{ range .Site.Data.requests }}
+        <div class="aid-card"
+             data-location="{{ .location }}"
+             data-tags="{{ delimit .tags "," }}"
+             data-created="{{ .created_at }}"
+             data-name="{{ .name }}">
+            <h2 class="aid-name">{{ .name }}</h2>
+            {{ if .location }}
+            <p class="aid-location">📍 {{ .location }}</p>
+            {{ end }}
+            <p class="aid-description">{{ .description }}</p>
+            {{ if .tags }}
+            <div class="aid-tags">
+                {{ range .tags }}
+                <span class="tag">{{ . }}</span>
+                {{ end }}
+            </div>
+            {{ end }}
+            <div class="aid-meta">
+                {{ if .created_at }}
+                <span class="date">Posted: {{ .created_at }}</span>
+                {{ end }}
+            </div>
+            <a href="{{ .link }}" target="_blank" rel="noopener noreferrer" class="aid-link">View Request →</a>
+        </div>
+        {{ end }}
+    </div>
+
+    <div class="contribute">
+        <h2>Want to add a mutual aid request?</h2>
+        <p>Create a pull request on our <a href="https://github.com/aschepis/mutual-aid-list" target="_blank">GitHub repository</a>.</p>
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "en-us" }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ .Site.Params.description | default "Mutual Aid List - Connecting people with mutual aid needs" }}">
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+</head>
+<body>
+    {{ block "header" . }}{{ partial "header.html" . }}{{ end }}
+
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+
+    {{ block "footer" . }}{{ partial "footer.html" . }}{{ end }}
+
+    <script src="{{ "js/app.js" | relURL }}"></script>
+</body>
+</html>

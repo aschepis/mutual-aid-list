@@ -1,3 +1,7 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://aschepis.github.io/mutual-aid-list/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Mutual Aid List'
+theme = 'mutual-aid'
+
+[params]
+  description = 'Direct links to mutual aid needs in Massachusetts and New England. Connecting people who need help with those who can provide it.'

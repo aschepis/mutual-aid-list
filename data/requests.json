@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Family Displaced by Fire - Emergency Housing Support",
+    "description": "A family of four lost their home in a fire and needs immediate assistance with temporary housing, clothing, and basic necessities while they rebuild.",
+    "link": "https://gofundme.com/example1",
+    "location": "Boston, MA",
+    "tags": ["housing", "emergency", "family"],
+    "created_at": "2025-01-10T10:00:00Z",
+    "updated_at": "2025-01-10T10:00:00Z"
+  },
+  {
+    "name": "Medical Expenses for Cancer Treatment",
+    "description": "Help Sarah cover medical expenses not covered by insurance as she undergoes treatment for stage 3 breast cancer.",
+    "link": "https://gofundme.com/example2",
+    "location": "Worcester, MA",
+    "tags": ["medical", "health", "cancer"],
+    "created_at": "2025-01-08T14:30:00Z",
+    "updated_at": "2025-01-08T14:30:00Z"
+  },
+  {
+    "name": "Single Parent Facing Eviction",
+    "description": "Single mother of two facing eviction due to job loss during federal shutdown. Needs help with rent and utilities to keep her family housed.",
+    "link": "https://gofundme.com/example3",
+    "location": "Springfield, MA",
+    "tags": ["housing", "family", "eviction", "federal-shutdown"],
+    "created_at": "2025-01-15T09:15:00Z",
+    "updated_at": "2025-01-15T09:15:00Z"
+  },
+  {
+    "name": "Food Assistance for Immigrant Family",
+    "description": "Undocumented family seeking support for food and basic supplies as they navigate increased ICE enforcement activity in their community.",
+    "link": "https://gofundme.com/example4",
+    "location": "Providence, RI",
+    "tags": ["food", "immigration", "family"],
+    "created_at": "2025-01-12T16:45:00Z",
+    "updated_at": "2025-01-12T16:45:00Z"
+  },
+  {
+    "name": "Veteran Needs Transportation Assistance",
+    "description": "Disabled veteran needs help purchasing a reliable vehicle to get to medical appointments and job interviews.",
+    "link": "https://gofundme.com/example5",
+    "location": "Manchester, NH",
+    "tags": ["transportation", "veteran", "disability"],
+    "created_at": "2025-01-05T11:20:00Z",
+    "updated_at": "2025-01-05T11:20:00Z"
+  },
+  {
+    "name": "Emergency Dental Care",
+    "description": "Working individual without dental insurance needs emergency root canal and crown to avoid infection and job loss.",
+    "link": "https://gofundme.com/example6",
+    "location": "Cambridge, MA",
+    "tags": ["medical", "dental", "emergency"],
+    "created_at": "2025-01-14T13:00:00Z",
+    "updated_at": "2025-01-14T13:00:00Z"
+  },
+  {
+    "name": "Childcare Costs During Federal Shutdown",
+    "description": "Federal employee furloughed and unable to afford childcare. Needs help keeping children in daycare while searching for temporary work.",
+    "link": "https://gofundme.com/example7",
+    "location": "Portland, ME",
+    "tags": ["childcare", "federal-shutdown", "family"],
+    "created_at": "2025-01-11T08:30:00Z",
+    "updated_at": "2025-01-11T08:30:00Z"
+  },
+  {
+    "name": "Funeral Expenses for Unexpected Loss",
+    "description": "Family unexpectedly lost their primary breadwinner and needs help covering funeral and burial costs.",
+    "link": "https://gofundme.com/example8",
+    "location": "New Haven, CT",
+    "tags": ["funeral", "family", "emergency"],
+    "created_at": "2025-01-09T15:45:00Z",
+    "updated_at": "2025-01-09T15:45:00Z"
+  }
+]
