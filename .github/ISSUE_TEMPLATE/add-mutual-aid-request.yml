@@ -54,12 +54,13 @@ body:
       label: Primary Need Category
       description: What is the primary type of assistance needed?
       options:
-        - housing
+        - legal
+        - family
         - medical
+        - housing
         - food
         - childcare
         - transportation
-        - funeral
         - emergency
         - other
     validations:
@@ -85,8 +86,6 @@ body:
         - label: I have permission to share this information publicly
           required: true
         - label: The link directs to a trusted mutual aid platform
-          required: true
-        - label: This request is for someone in Massachusetts or New England
           required: true
 
   - type: textarea
