@@ -23,12 +23,72 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background);
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* Top Banner */
+.top-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.banner-message {
+    flex: 1;
+    min-width: 200px;
+}
+
+.banner-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.banner-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: background-color 0.3s ease;
+}
+
+.github-link:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.github-link svg {
+    flex-shrink: 0;
 }
 
 /* Header */
@@ -53,12 +113,12 @@ body {
 /* Main Content */
 main {
     min-height: calc(100vh - 200px);
-    padding: 2rem 0;
 }
 
 .intro {
     text-align: center;
     margin-bottom: 3rem;
+    padding-top: 2rem;
 }
 
 .intro h1 {
@@ -257,6 +317,21 @@ select:focus {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .banner-text {
+        font-size: 0.9rem;
+    }
+
+    .banner-links {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
     .intro h1 {
         font-size: 2rem;
     }

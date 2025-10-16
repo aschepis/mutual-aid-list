@@ -1,6 +1,6 @@
 baseURL = 'https://aschepis.github.io/mutual-aid-list/'
 languageCode = 'en-us'
-title = 'Mutual Aid List'
+title = 'Mutual Aid Needs'
 theme = 'mutual-aid'
 
 [params]

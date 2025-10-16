@@ -1,36 +1,99 @@
 # Mutual Aid List
 
-This is a list of direct links to mutual aid needs (GoFundMe, etc) in
-Massachusetts and New England. The focus of the list is to connect people with individuals who need mutual aid. This is driven by the federal government shutdown that is impacting many people across the country and also the increasing impact of ICE raids in our communities.
+A directory of direct links to mutual aid needs (GoFundMe, fundraisers, etc.) in Massachusetts and New England. The focus is to connect people with individuals who need mutual aid, particularly those impacted by the federal government shutdown and the increasing impact of ICE raids in our communities.
+
+**Live Site**: [https://aschepis.github.io/mutual-aid-list/](https://aschepis.github.io/mutual-aid-list/)
 
 The site is modeled after [Operation Milkweed](https://operationmilkweed.org/).
 
-Users can contribute links to mutual aid by creating a pull request on this repo. The pull request should be a new file in the `_data`. Ideally each mutual aid request is its own file, but this could be a single file called `mutual-aid-list.json` if Hugo is having trouble with the individual files. Each file should contain a JSON object with the following properties:
+## Features
 
-- `name`: The name of the mutual aid need
-- `description`: A short description of the mutual aid need
-- `link`: The direct link to the mutual aid need
-- `location`: The location of the mutual aid need
-- `tags`: An array of tags for the mutual aid need
-- `created_at`: The date and time the mutual aid need was created
-- `updated_at`: The date and time the mutual aid need was last updated
+- **Sortable**: Sort requests by newest, oldest, name, or location
+- **Filterable**: Filter by location or tags
+- **Responsive**: Clean, minimal design that works on all devices
+- **Community-driven**: Anyone can add requests via pull request
 
-The `name` and `description` are required. The `link` is required. The `created_at` and `updated_at` are optional. If the `created_at` is not provided, it will be set to the current date and time. If the `updated_at` is not provided, it will be set to the current date and time.
+## Contributing
 
-The `name` should be a short, descriptive name for the mutual aid need. The `description` should be a short description of the mutual aid need. The `link` should be the direct link to the mutual aid need.
+We welcome contributions from the community! If you know someone who needs help, you can add their mutual aid request to this list.
 
-The `created_at` and `updated_at` are used to track the date and time the mutual aid need was created and last updated.
+### How to Add a Mutual Aid Request
 
-The `location` is the location of the mutual aid need. This must be in the form "[City], [State Code]". The `category` is the category of the mutual aid need. This can be a general category or a specific category. The `subcategory` is the subcategory of the mutual aid need. This can be a specific subcategory or a general subcategory.
+1. **Fork this repository**
 
-`tags` is an array of tags for the mutual aid need. This could be a category, subcategory, or anything else that is relevant to the aid request.
+2. **Edit the data file**: Open `data/requests.json` and add a new entry to the array:
 
-Requirements:
+```json
+{
+  "name": "Short, descriptive name of the need",
+  "description": "Brief description of the mutual aid need and situation",
+  "link": "https://gofundme.com/example",
+  "location": "City, MA",
+  "tags": ["housing", "medical", "emergency"],
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}
+```
 
-- [ ] A pull request template that will be used to guide the creation of the pull request.
-- [ ] Github actions to validate the pull request. The actions will check if the pull request is a valid JSON file and if the file is in the `_data` directory.
-- [ ] built using Hugo and will be deployed to a GitHub Pages site using the `gh-pages` branch.
-- [ ] Uses a clean, minimal design.
-- [ ] A list of mutual aid requests based on the `_data` directory.
-- [ ] sortable by name, location, date, newest/oldest
-- [ ] filterable by tag, location
+3. **Submit a pull request**: Our automated checks will validate your submission
+
+### Data Schema
+
+Each mutual aid request must include:
+
+| Field | Required | Format | Description |
+|-------|----------|--------|-------------|
+| `name` | ✅ Yes | String | Short, descriptive name for the mutual aid need |
+| `description` | ✅ Yes | String | Brief description of the need |
+| `link` | ✅ Yes | URL | Direct link to the mutual aid request (GoFundMe, etc.) |
+| `location` | ⚠️ Recommended | String | Format: `"[City], [State Code]"` (e.g., `"Boston, MA"`) |
+| `tags` | ⚠️ Recommended | Array | Tags like `["housing", "medical", "family"]` |
+| `created_at` | Optional | ISO 8601 | Date created (defaults to current date if omitted) |
+| `updated_at` | Optional | ISO 8601 | Date last updated (defaults to current date if omitted) |
+
+### Example Tags
+
+Common tags include:
+- `housing`, `eviction`, `emergency`
+- `medical`, `dental`, `health`, `cancer`
+- `food`, `childcare`, `transportation`
+- `family`, `veteran`, `disability`, `immigration`
+- `federal-shutdown`, `funeral`
+
+### Validation
+
+When you submit a pull request, GitHub Actions will automatically:
+- ✅ Validate JSON syntax
+- ✅ Check for required fields (`name`, `description`, `link`)
+- ✅ Verify location format if provided
+- ✅ Ensure files are in the correct directory
+
+### Questions?
+
+Open an issue or reach out if you need help contributing!
+
+## Local Development
+
+To run the site locally:
+
+```bash
+# Clone the repository
+git clone https://github.com/aschepis/mutual-aid-list.git
+cd mutual-aid-list
+
+# Start Hugo server
+hugo server
+
+# Site will be available at http://localhost:1313/mutual-aid-list/
+```
+
+## Built With
+
+- [Hugo](https://gohugo.io/) - Static site generator
+- Custom minimal theme
+- GitHub Pages for hosting
+- GitHub Actions for automated validation and deployment
+
+## License
+
+This project is open source and contributions are welcome.
