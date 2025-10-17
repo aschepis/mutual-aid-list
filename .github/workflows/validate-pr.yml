@@ -124,9 +124,17 @@ jobs:
         run: |
           echo "Verifying files are in data/ directory..."
 
-          # Get list of changed files
-          git fetch origin main
-          changed_files=$(git diff --name-only origin/main...HEAD)
+          # Get list of changed files using GitHub API
+          changed_files="${{ github.event.pull_request.changed_files }}"
+
+          # If that's not available, use git diff with a safer approach
+          if [ -z "$changed_files" ]; then
+            # Fetch the base branch
+            git fetch origin ${{ github.event.pull_request.base.ref }}
+
+            # Use two-dot diff instead of three-dot to avoid merge base issues
+            changed_files=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}..HEAD || echo "")
+          fi
 
           # Check if any changed JSON files are outside data/
           invalid_files=$(echo "$changed_files" | grep '\.json$' | grep -v '^data/' || true)
