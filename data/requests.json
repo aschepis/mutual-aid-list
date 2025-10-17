@@ -103,5 +103,17 @@
     ],
     "created_at": "2025-01-09T15:45:00Z",
     "updated_at": "2025-01-09T15:45:00Z"
+  },
+  {
+    "name": "Testing the form and github actions",
+    "description": "This is a test of the form and github actions that turn it into a PR",
+    "link": "https://aschepis.github.io/mutual-aid-list",
+    "location": "Cambridge, MA",
+    "tags": [
+      "emergency",
+      "_no response_"
+    ],
+    "created_at": "2025-10-17T13:11:36.290Z",
+    "updated_at": "2025-10-17T13:11:36.290Z"
   }
 ]
