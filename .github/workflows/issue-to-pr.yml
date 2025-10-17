@@ -67,10 +67,24 @@ jobs:
             const primaryTag = parseField('Primary Need Category');
             const additionalTags = parseField('Additional Tags \\(Optional\\)');
 
+            // Helper to clean up GitHub's "_No response_" placeholder (case-insensitive)
+            const cleanValue = (val) => {
+              if (!val || val.trim() === '') return '';
+              const cleaned = val.trim();
+              if (cleaned.toLowerCase() === '_no response_') return '';
+              return cleaned;
+            };
+
             // Build tags array
-            const tags = [primaryTag.toLowerCase()];
-            if (additionalTags) {
-              const extraTags = additionalTags.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
+            const tags = [];
+            if (primaryTag && cleanValue(primaryTag)) {
+              tags.push(cleanValue(primaryTag).toLowerCase());
+            }
+            if (additionalTags && cleanValue(additionalTags)) {
+              const extraTags = cleanValue(additionalTags).split(',')
+                .map(t => t.trim())
+                .filter(t => t && t.toLowerCase() !== '_no response_')
+                .map(t => t.toLowerCase());
               tags.push(...extraTags);
             }
 
@@ -80,14 +94,18 @@ jobs:
               name: name,
               description: description,
               link: link,
-              location: location || undefined,
-              tags: tags,
+              location: cleanValue(location) || undefined,
+              tags: tags.length > 0 ? tags : undefined,
               created_at: now,
               updated_at: now
             };
 
-            // Remove undefined fields
-            Object.keys(entry).forEach(key => entry[key] === undefined && delete entry[key]);
+            // Remove undefined fields and empty arrays
+            Object.keys(entry).forEach(key => {
+              if (entry[key] === undefined || entry[key] === '' || (Array.isArray(entry[key]) && entry[key].length === 0)) {
+                delete entry[key];
+              }
+            });
 
             // Validate required fields
             if (!name || !description || !link) {
