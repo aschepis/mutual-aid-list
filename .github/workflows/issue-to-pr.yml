@@ -137,28 +137,42 @@ jobs:
           # Read existing data
           DATA_FILE="data/requests.json"
 
+          # Debug: Show what we're working with
+          echo "Entry to add:"
+          echo "$ENTRY"
+
           # Add new entry to the JSON array
           echo "$ENTRY" > /tmp/new_entry.json
 
-          # Validate JSON before appending
+          # Validate the new entry is valid JSON
+          if ! jq empty /tmp/new_entry.json 2>/dev/null; then
+            echo "Error: New entry is not valid JSON"
+            cat /tmp/new_entry.json
+            exit 1
+          fi
+
+          # Validate existing data file
           if ! jq empty $DATA_FILE 2>/dev/null; then
             echo "Error: Existing data file is not valid JSON"
             exit 1
           fi
 
-          # Use jq to append to array
-          if ! jq ". += [$(cat /tmp/new_entry.json)]" $DATA_FILE > /tmp/updated.json; then
+          # Use jq with --slurpfile for safer merging
+          if ! jq --slurpfile newentry /tmp/new_entry.json '. += $newentry' $DATA_FILE > /tmp/updated.json; then
             echo "Error: Failed to merge JSON data"
+            echo "New entry content:"
+            cat /tmp/new_entry.json
+            exit 1
+          fi
+
+          # Validate the updated file
+          if ! jq empty /tmp/updated.json 2>/dev/null; then
+            echo "Error: Updated data file is not valid JSON"
+            cat /tmp/updated.json
             exit 1
           fi
 
           mv /tmp/updated.json $DATA_FILE
-
-          # Validate the updated file
-          if ! jq empty $DATA_FILE 2>/dev/null; then
-            echo "Error: Updated data file is not valid JSON"
-            exit 1
-          fi
 
           # Commit changes
           git add $DATA_FILE
@@ -183,31 +197,39 @@ jobs:
       - name: Create Pull Request
         id: create_pr
         continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH_NAME="${{ steps.parse.outputs.branch_name }}"
+          ISSUE_NUMBER="${{ steps.parse.outputs.issue_number }}"
+          ISSUE_TITLE="${{ steps.parse.outputs.issue_title }}"
+
+          # Create PR using gh CLI
+          PR_URL=$(gh pr create \
+            --title "$ISSUE_TITLE" \
+            --body "This PR was automatically created from issue #${ISSUE_NUMBER}
+
+          Closes #${ISSUE_NUMBER}" \
+            --base main \
+            --head "$BRANCH_NAME")
+
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+          echo "Created PR: $PR_URL"
+
+      - name: Add success comment to issue
+        if: steps.create_pr.outcome == 'success'
         uses: actions/github-script@v7
         with:
           script: |
-            const branchName = '${{ steps.parse.outputs.branch_name }}';
+            const prUrl = '${{ steps.create_pr.outputs.pr_url }}';
             const issueNumber = '${{ steps.parse.outputs.issue_number }}';
-            const issueTitle = '${{ steps.parse.outputs.issue_title }}';
 
-            const { data: pr } = await github.rest.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: issueTitle,
-              head: branchName,
-              base: 'main',
-              body: `This PR was automatically created from issue #${issueNumber}\n\nCloses #${issueNumber}`
-            });
-
-            // Add comment to issue
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
-              body: `✅ **Thank you for your submission!**\n\nA pull request has been automatically created: #${pr.number}\n\nThe request will be reviewed and merged shortly. You'll receive a notification when it's live on the site.`
+              body: `✅ **Thank you for your submission!**\n\nA pull request has been automatically created: ${prUrl}\n\nThe request will be reviewed and merged shortly. You'll receive a notification when it's live on the site.`
             });
-
-            console.log(`Created PR #${pr.number}`);
 
       - name: Check PR creation success
         if: steps.create_pr.outcome == 'failure'
